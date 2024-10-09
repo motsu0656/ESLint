@@ -2,7 +2,7 @@ $(function () {
   // 共通のメッセージ削除処理を関数化
   function removeMessages() {
     // .message クラスの要素をすべて削除
-    $(".message").remove();
+    $('.message').remove();
   }
 
   // 検索結果を処理する関数 processSearchResults
@@ -18,13 +18,19 @@ $(function () {
       // 検索結果がある場合、各アイテムをリストに追加
       items.forEach(function (book) {
         // タイトルを取得（存在しない場合は "タイトル不明"）
-        const title = book.title ? book.title : "タイトル不明";
+        const title = book.title
+? book.title
+: 'タイトル不明';
         // 作者を取得（存在しない場合は "作者不明"）
-        const creator = book["dc:creator"] ? book["dc:creator"] : "作者不明";
+        const creator = book['dc:creator']
+? book['dc:creator']
+: '作者不明';
         // 出版社を取得（存在しない場合は "出版社不明"）
-        const publisher = book["dc:publisher"] && book["dc:publisher"][0] ? book["dc:publisher"][0] : "出版社不明";
+        const publisher = book['dc:publisher'] && book['dc:publisher'][0]
+? book['dc:publisher'][0]
+: '出版社不明';
         // 書籍のリンクを取得
-        const link = book.link["@id"];
+        const link = book.link['@id'];
 
         // 新しいリストアイテムのHTMLを作成
         const listItem = `
@@ -38,7 +44,7 @@ $(function () {
           </li>
         `;
         // リストの先頭にリストアイテムを追加
-        $(".lists").prepend(listItem);
+        $('.lists').prepend(listItem);
       });
     } else {
       // 検索結果がない場合、メッセージを表示
@@ -49,19 +55,19 @@ $(function () {
         </div>
       `;
       // リストの前にメッセージを表示
-      $(".lists").before(noResultMessage);
+      $('.lists').before(noResultMessage);
     }
   }
 
   // エラー時の処理を行う関数 handleError
   function handleError(error) {
     // リストを空にする
-    $(".lists").empty();
+    $('.lists').empty();
     // 既存のメッセージを削除
     removeMessages();
 
     // エラーメッセージを生成
-    let errorMessage = "";
+    let errorMessage = '';
     if (error.status === 0) {
       // 通信エラーの場合のメッセージ
       errorMessage = `
@@ -88,22 +94,22 @@ $(function () {
       `;
     }
     // エラーメッセージをリストの前に表示
-    $(".lists").before(errorMessage);
+    $('.lists').before(errorMessage);
   }
 
   // ページ数を管理する変数 currentPage と前回の検索キーワードを保持する変数 previousSearch を定義
   let currentPage = 1;
-  let previousSearch = "";
+  let previousSearch = '';
 
   // 検索ボタンがクリックされたときの処理
-  $(".search-btn").on("click", function () {
+  $('.search-btn').on('click', function () {
     // 検索ボックスの値（検索キーワード）を取得
-    const searchKeyword = $("#search-input").val();
+    const searchKeyword = $('#search-input').val();
 
     // 前回のキーワードと異なる場合、ページ数をリセットし、リストを空にする
     if (searchKeyword !== previousSearch) {
       currentPage = 1;  // ページ数を1にリセット
-      $(".lists").empty();  // リストを空にする
+      $('.lists').empty();  // リストを空にする
       previousSearch = searchKeyword;  // 検索キーワードを更新
     } else {
       // 同じキーワードならページ数を増やす
@@ -113,11 +119,11 @@ $(function () {
     // AJAXリクエストでデータを取得
     $.ajax({
       url: `https://ci.nii.ac.jp/books/opensearch/search?title=${searchKeyword}&format=json&p=${currentPage}&count=20`,  // APIのURLを設定
-      method: "GET",  // GETリクエストで送信
+      method: 'GET'  // GETリクエストで送信
     })
       .done(function (response) {
         // データが取得できたら、検索結果を処理する
-        processSearchResults(response["@graph"]);
+        processSearchResults(response['@graph']);
       })
       .fail(function (error) {
         // エラー時の処理を別関数 handleError で実行
@@ -126,12 +132,12 @@ $(function () {
   });
 
   // リセットボタンがクリックされたときの処理
-  $(".reset-btn").on("click", function () {
+  $('.reset-btn').on('click', function () {
     // ページ数と検索キーワードをリセットし、リストを空にする
     currentPage = 1;  // ページ数をリセット
-    previousSearch = "";  // 前回の検索キーワードをリセット
-    $(".lists").empty();  // リストを空にする
+    previousSearch = '';  // 前回の検索キーワードをリセット
+    $('.lists').empty();  // リストを空にする
     removeMessages();  // メッセージを削除
-    $("#search-input").val("");  // 検索ボックスを空にする
+    $('#search-input').val('');  // 検索ボックスを空にする
   });
 });
